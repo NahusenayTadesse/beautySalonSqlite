@@ -62,12 +62,12 @@ export const load: LayoutServerLoad = async ({ params, locals }) => {
 			phone: staff.phone,
 			email: staff.email,
 			status: staff.isActive,
-			hireDate: sql<string>`DATE_FORMAT(${staff.hireDate}, '%Y-%m-%d')`,
+			hireDate: staff.hireDate,
 			govId: staff.govtId,
 			contract: staff.contract,
 			employmentStatus: staff.employmentStatus,
 			addedBy: user.name,
-			years: sql<number>`TIMESTAMPDIFF(YEAR, ${staff.hireDate}, CURDATE())`
+			years: sql<number>`CAST((julianday('now') - julianday(${staff.hireDate})) / 365.25 AS INTEGER)`
 		})
 		.from(staff)
 		.leftJoin(staffTypes, eq(staff.type, staffTypes.id))

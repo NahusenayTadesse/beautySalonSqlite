@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const allTransactions = await db
 		.select({
 			id: expenses.id,
-			date: sql<string>`DATE_FORMAT(${expenses.createdAt}, '%W %Y-%m-%d')`,
+			date: expenses.createdAt,
 			amount: expenses.total,
 			reason: expenses.description,
 			paymentMethods: paymentMethods.name,

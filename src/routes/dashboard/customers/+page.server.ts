@@ -11,14 +11,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const customersList = await db
 		.select({
 			id: customers.id,
-			customerName: sql<string>`TRIM(CONCAT(${customers.firstName}, ' ', COALESCE(${customers.lastName}, '')))`,
+			// SQLite uses || for concatenation and IFNULL instead of COALESCE (though COALESCE works too)
+			customerName: sql<string>`TRIM(${customers.firstName} || ' ' || COALESCE(${customers.lastName}, ''))`,
 			phone: customers.phone,
 			appointmentCount: sql<number>`COUNT(${appointments.id})`,
 			salesCount: sql<number>`SUM(${transactions.amount})`,
-			daysSinceJoined: sql<number>`DATEDIFF(CURRENT_DATE, ${customers.createdAt})`,
+			// SQLite doesn't have DATEDIFF; we subtract Julian day values
+			daysSinceJoined: sql<number>`CAST(julianday('now') - julianday(${customers.createdAt}) AS INTEGER)`,
 			createdBy: user.name,
 			createdById: user.id,
-			createdAt: sql<string>`DATE_FORMAT(${customers.createdAt}, '%Y-%m-%d')`
+			// SQLite uses strftime for date formatting
+			createdAt: sql<string>`strftime('%Y-%m-%d', ${customers.createdAt})`
 		})
 		.from(customers)
 		.leftJoin(appointments, eq(customers.id, appointments.customerId))
@@ -27,12 +30,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.groupBy(
 			customers.id,
 			user.name,
+			user.id, // Added to ensure valid grouping
 			customers.createdAt,
 			customers.firstName,
 			customers.lastName,
 			customers.phone
 		);
-
 	return {
 		customersList
 	};

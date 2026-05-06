@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			phone: staff.phone,
 			email: staff.email,
 			status: staff.employmentStatus,
-			years: sql<number>`TIMESTAMPDIFF(YEAR, ${staff.hireDate}, CURDATE())`
+			years: sql<number>`CAST((julianday('now') - julianday(${staff.hireDate})) / 365.25 AS INTEGER)`
 		})
 		.from(staff)
 		.leftJoin(staffTypes, eq(staffTypes.id, staff.type))

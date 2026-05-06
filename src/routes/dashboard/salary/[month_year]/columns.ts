@@ -171,7 +171,7 @@ export const columns = [
 	{
 		accessorKey: 'paymentDate',
 		header: 'Payment Date',
-		cell: (info) => formatEthiopianDate(new Date(info.getValue())) || 'N/A',
+		cell: (info) => (info.getValue() ? formatEthiopianDate(new Date(info.getValue())) : 'N/A'),
 		sortable: true
 	},
 

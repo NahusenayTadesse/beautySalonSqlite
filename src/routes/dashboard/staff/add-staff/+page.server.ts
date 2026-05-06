@@ -82,32 +82,34 @@ export const actions: Actions = {
 			const imageName = govId ? await saveUploadedFile(govId) : null;
 
 			const contractName = contract ? await saveUploadedFile(contract) : null;
+			await db.transaction(async (tx) => {
+				const [staffMember] = await tx
+					.insert(staff)
+					.values({
+						firstName,
+						lastName,
+						grandFatherName,
+						email,
+						phone,
+						govtId: imageName,
+						contract: contractName,
+						type: position,
+						hireDate: hiredAt ? new Date(hiredAt) : null,
+						createdBy: locals.user?.id
+					})
+					.returning();
+				if (salary) {
+					await tx.insert(salaries).values({
+						startDate: hiredAt ? new Date(hiredAt) : new Date(),
+						amount: salary,
+						staffId: staffMember.id,
+						createdBy: locals.user?.id
+					});
+				}
+				delete form.data.govId;
+				delete form.data.contract;
+			});
 
-			const [staffMember] = await db
-				.insert(staff)
-				.values({
-					firstName,
-					lastName,
-					grandFatherName,
-					email,
-					phone,
-					govtId: imageName,
-					contract: contractName,
-					type: position,
-					hireDate: hiredAt ? new Date(hiredAt) : null,
-					createdBy: locals.user?.id
-				})
-				.returning();
-			if (salary) {
-				await db.insert(salaries).values({
-					amount: salary,
-					staffId: staffMember.id,
-					createdBy: locals.user?.id
-				});
-			}
-
-			delete form.data.govId;
-			delete form.data.contract;
 			return message(form, { type: 'success', text: 'Staff Successfully Added' });
 		} catch (err) {
 			console.error(err);

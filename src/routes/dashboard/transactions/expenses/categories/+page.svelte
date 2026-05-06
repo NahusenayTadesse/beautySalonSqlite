@@ -6,7 +6,7 @@
 	import DialogComp from '$lib/formComponents/DialogComp.svelte';
 	import { Button } from '$lib/components/ui/button/index';
 	import Edit from './edit.svelte';
-	export const columns = [
+	const columns = [
 		{
 			accessorKey: 'index',
 			header: '#',
@@ -29,30 +29,20 @@
 					description: row.original.description,
 					action: '?/edit',
 					data: data?.editForm,
-					icon: false,
-					status: row.original.status
+					icon: false
 				});
 			}
-		},
-		{
-			accessorKey: 'description',
-			header: 'Description',
-			sortable: true
 		},
 
 		{
-			accessorKey: 'status',
-			header: ({ column }) =>
-				renderComponent(DataTableSort, {
-					name: 'Status',
-					onclick: column.getToggleSortingHandler()
-				}),
+			accessorKey: 'description',
+			header: 'Description',
 			sortable: true,
-			cell: ({ row }) => {
-				return renderComponent(Statuses, {
-					status: row.original.status ? 'Active' : 'Inactive'
-				});
-			}
+			// cell: ({ row }) => {
+			// 	return renderComponent(BigText, {
+			// 		text: row.original.description
+			// 	});
+			// }
 		},
 
 		{
@@ -67,11 +57,23 @@
 					description: row.original.description,
 					action: '?/edit',
 					data: data?.editForm,
-					icon: true,
-					status: row.original.status
+					icon: true
 				});
 			}
 		}
+		// {
+		// 	accessorKey: '',
+		// 	header: 'Delete',
+		// 	sortable: true,
+		// 	cell: ({ row }) => {
+		// 		// You can pass whatever you need from `row.original` to the component
+		// 		return renderComponent(Delete, {
+		// 			id: row.original.id,
+		// 			action: '?/delete',
+		// 			data: data.deleteForm
+		// 		});
+		// 	}
+		// }
 	];
 	let { data } = $props();
 	import { superForm } from 'sveltekit-superforms/client';
@@ -82,6 +84,8 @@
 	const { form, errors, enhance, delayed, message } = superForm(data.form, {});
 
 	import { toast } from 'svelte-sonner';
+	// import BigText from '$lib/components/Table/bigText.svelte';
+	import Delete from './delete.svelte';
 	$effect(() => {
 		if ($message) {
 			if ($message.type === 'error') {
@@ -94,45 +98,34 @@
 </script>
 
 <svelte:head>
-	<title>Service Category</title>
+	<title>Expense Types</title>
 </svelte:head>
 
-<DialogComp title="Add New Expense Category" variant="default" IconComp={Plus}>
-	<form action="?/add" use:enhance id="main" class="flex flex-col gap-4" method="post">
-		<InputComp {form} {errors} label="name" type="text" name="name" required={true} />
-
-		<InputComp
-			{form}
-			{errors}
-			label="Description"
-			type="textarea"
-			name="description"
-			placeholder="Enter Service Category Description"
-			required={true}
-			rows={10}
-		/>
-
-		<InputComp
-			label="Status"
-			name="status"
-			type="select"
-			{form}
-			{errors}
-			items={[
-				{ value: true, name: 'Active' },
-				{ value: false, name: 'Inactive' }
-			]}
-		/>
-
-		<Button type="submit" form="main">
-			{#if $delayed}
-				<LoadingBtn name="Adding Service Category" />
-			{:else}
-				<Plus /> Add Service Category
-			{/if}
-		</Button>
-	</form>
-</DialogComp>
 {#key data.allData}
-	<DataTable {columns} data={data?.allData} search={true} fileName="Service Categories" />
+	<DialogComp title="Add New Expense Type" IconComp={Plus} variant="default">
+		<form action="?/add" use:enhance id="main" class="flex flex-col gap-4" method="post">
+			<InputComp {form} {errors} label="name" type="text" name="name" required={true} />
+
+			<InputComp
+				{form}
+				{errors}
+				label="Description"
+				type="textarea"
+				name="description"
+				placeholder="Enter Category Description"
+				required={true}
+				rows={10}
+			/>
+
+			<Button type="submit" form="main">
+				{#if $delayed}
+					<LoadingBtn name="Adding Expense Type" />
+				{:else}
+					<Plus /> Add Expense Type
+				{/if}
+			</Button>
+		</form>
+	</DialogComp>
+
+	<DataTable {columns} data={data?.allData} search={true} />
 {/key}

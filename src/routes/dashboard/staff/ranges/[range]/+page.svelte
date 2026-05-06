@@ -28,7 +28,7 @@
 	let singleTable = $derived([
 		{ name: 'Name', value: `${data.staffMember?.firstName} ${data.staffMember?.lastName} ${data.staffMember?.grandFatherName}` },
 		{ name: 'Position', value: data.staffMember?.category },
-		{ name: 'Hired On', value: data.staffMember?.hireDate },
+		{ name: 'Hired On', value: formatEthiopianDate(new Date(data.staffMember?.hireDate)) },
 		{ name: 'Added By', value: data.staffMember?.addedBy },
 		{
 			name: 'Employment Status',
@@ -84,6 +84,7 @@
 	import Families from './Families.svelte';
 
 	import { page } from '$app/state';
+	import { formatEthiopianDate } from '$lib/global.svelte.js';
 </script>
 
 <svelte:head>

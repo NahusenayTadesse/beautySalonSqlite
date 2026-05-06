@@ -21,10 +21,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			status: appointments.status,
 			bookedById: user.id,
 			booker: user.name,
-			date: sql<string>`DATE_FORMAT(${appointments.appointmentDate}, '%Y-%m-%d')`,
-			time: sql<string>`DATE_FORMAT(${appointments.appointmentTime}, '%H:%i')`,
+			date: appointments.appointmentDate,
+			time: appointments.appointmentTime,
 			notes: appointments.notes,
-			bookedAt: sql<string>`DATE_FORMAT(${appointments.createdAt}, '%Y-%m-%d')`,
+			bookedAt: appointments.createdAt,
 			paidAmount: sql<number>`COALESCE(SUM(${transactions.amount}), 0)`
 		})
 		.from(appointments)

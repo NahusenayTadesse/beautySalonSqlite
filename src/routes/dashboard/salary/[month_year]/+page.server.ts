@@ -91,7 +91,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			status: payrollEntries.status,
 			paymentMethodId: payrollEntries.paymentMethodId,
 			bank: paymentMethods.name,
-			paymentDate: sql<string>`DATE_FORMAT(${payrollEntries.paymentDate}, '%W, %b %d %Y')`,
+			paymentDate: payrollEntries.paymentDate,
 			notes: payrollEntries.notes,
 			receiptLink: payrollEntries.recieptLink,
 			// Now we pull directly from the pre-aggregated subqueries

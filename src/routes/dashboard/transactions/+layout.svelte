@@ -14,13 +14,7 @@
 			><Sheet /> Transactions</Button
 		>
 	{/if}
-	{#if data?.permList?.some((p) => p.name === 'view:expenses')}
-		<Button
-			href="/dashboard/transactions/expenses"
-			variant={page.url.pathname.startsWith('/dashboard/transactions/expenses') && !page.url.pathname.includes('add-expense') ? 'default' : 'outline'}
-			><Sheet /> Expenses</Button
-		>
-	{/if}
+
 	{#if data?.permList?.some((p) => p.name === 'add:expenses')}
 		<Button
 			href="/dashboard/transactions/expenses/add-expense"
@@ -29,11 +23,19 @@
 				: 'outline'}><Plus /> Add Expense</Button
 		>
 
+
+	{/if}
+	{#if data?.permList?.some((p) => p.name === 'view:expenses')}
 		<Button
-			href="/dashboard/transactions/expenses/add-expense-category"
-			variant={page.url.pathname === '/dashboard/transactions/expenses/add-expense-category'
+			href="/dashboard/transactions/expenses"
+			variant={page.url.pathname.startsWith('/dashboard/transactions/expenses') && !page.url.pathname.includes('categories') ? 'default' : 'outline'}
+			><Sheet /> Expenses</Button
+		>
+		<Button
+			href="/dashboard/transactions/expenses/categories"
+			variant={page.url.pathname === '/dashboard/transactions/expenses/categories'
 				? 'default'
-				: 'outline'}><Plus /> Add Expense Category</Button
+				: 'outline'}><Sheet />  Expense Categories</Button
 		>
 	{/if}
 </div>

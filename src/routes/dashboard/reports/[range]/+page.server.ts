@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const allReports = await db
 		.select({
 			id: reports.id,
-			date: sql<string>`DATE_FORMAT(${reports.reportDate}, '%W %Y-%m-%d')`,
+			date: reports.reportDate,
 			bookedAppointments: reports.bookedAppointments,
 			productsSold: reports.productsSold,
 			serviceRendered: reports.servicesRendered,

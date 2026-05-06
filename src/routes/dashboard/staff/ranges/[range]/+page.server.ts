@@ -22,7 +22,7 @@ import {
 	staffContacts,
 	staffFamilies
 } from '$lib/server/db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, between } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail } from 'sveltekit-superforms';
 import { setFlash } from 'sveltekit-flash-message/server';
@@ -66,7 +66,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 		.where(
 			and(
-				currentMonthFilter(commissionService.commissionDate, start, end),
+				between(commissionService.commissionDate, start, end),
 
 				eq(commissionService.staffId, Number(id))
 			)
@@ -87,7 +87,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.where(
 			and(
 				eq(commissionProduct.staffId, Number(id)),
-				currentMonthFilter(commissionProduct.commissionDate, start, end)
+				between(commissionProduct.commissionDate, start, end)
 			)
 		);
 
@@ -104,7 +104,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 		.where(
 			and(
-				currentMonthFilter(tipsService.tipDate, start, end),
+				between(tipsService.tipDate, start, end),
 
 				eq(tipsService.staffId, Number(id))
 			)
@@ -121,9 +121,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.leftJoin(transactionProducts, eq(tipsProduct.saleItemId, transactionProducts.id))
 		.leftJoin(products, eq(transactionProducts.productId, products.id))
 
-		.where(
-			and(eq(tipsProduct.staffId, Number(id)), currentMonthFilter(tipsProduct.tipDate, start, end))
-		);
+		.where(and(eq(tipsProduct.staffId, Number(id)), between(tipsProduct.tipDate, start, end)));
 
 	// --- Select Bonuses ---
 	const staffBonuses = await db
@@ -135,7 +133,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			date: bonuses.bonusDate
 		})
 		.from(bonuses)
-		.where(and(eq(bonuses.staffId, id), currentMonthFilter(bonuses.bonusDate, start, end)));
+		.where(and(eq(bonuses.staffId, id), between(bonuses.bonusDate, start, end)));
 
 	// --- Select Overtime ---
 	const staffOvertime = await db
@@ -146,7 +144,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			date: overTime.date
 		})
 		.from(overTime)
-		.where(and(eq(overTime.staffId, id), currentMonthFilter(overTime.date, start, end)));
+		.where(and(eq(overTime.staffId, id), between(overTime.date, start, end)));
 
 	// --- Select Deductions ---
 	const staffDeductions = await db
@@ -158,12 +156,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			date: deductions.deductionDate
 		})
 		.from(deductions)
-		.where(
-			and(
-				eq(deductions.staffId, Number(id)),
-				currentMonthFilter(deductions.deductionDate, start, end)
-			)
-		);
+		.where(and(eq(deductions.staffId, Number(id)), between(deductions.deductionDate, start, end)));
 
 	const bankList = await paymentMethods();
 

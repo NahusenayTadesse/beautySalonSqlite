@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LoadingBtn from '$lib/formComponents/LoadingBtn.svelte';
-	import { SquarePen, Plus, Save } from '@lucide/svelte';
+	import { SquarePen, Plus } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { Edit } from './schema';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
@@ -22,8 +22,7 @@
 		id,
 		name,
 		description,
-		icon = false,
-		status = true
+		icon = false
 	}: {
 		data: SuperValidated<Infer<Edit>>;
 		action: string;
@@ -31,7 +30,6 @@
 		name: string;
 		icon: boolean;
 		description: string;
-		status: boolean;
 	} = $props();
 
 	const { form, errors, enhance, delayed, message, allErrors } = superForm(data, {
@@ -42,8 +40,8 @@
 
 	$form.id = id;
 	$form.name = name;
+
 	$form.description = description;
-	$form.status = status;
 
 	import { toast } from 'svelte-sonner';
 	import InputComp from '$lib/formComponents/InputComp.svelte';
@@ -90,23 +88,11 @@
 							rows={10}
 						/>
 
-						<InputComp
-							label="Status"
-							name="status"
-							type="select"
-							{form}
-							{errors}
-							items={[
-								{ value: true, name: 'Active' },
-								{ value: false, name: 'Inactive' }
-							]}
-						/>
-
 						<Button type="submit" class="mt-4" form="edit">
 							{#if $delayed}
 								<LoadingBtn name="Saving Changes" />
 							{:else}
-								<Save class="h-4 w-4" />
+								<Plus class="h-4 w-4" />
 
 								Save Changes
 							{/if}
